@@ -216,6 +216,7 @@ export default function AllMail() {
   const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
   const [dupWarning,      setDupWarning]      = useState(0);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<number>>(new Set());
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const uploadRef   = useRef<HTMLInputElement>(null);
@@ -673,7 +674,7 @@ export default function AllMail() {
                           <div key={card.id}
                             onDoubleClick={() => isCopied ? unmarkCopied(card.id) : undefined}
                             title={isCopied ? "Double-click to reset" : undefined}
-                            className={`rounded-xl border flex flex-col gap-0 transition-all shadow-sm overflow-hidden ${
+                            className={`relative rounded-xl border flex flex-col gap-0 transition-all shadow-sm overflow-hidden ${
                               inactive
                                 ? "bg-gray-950 border-gray-800"
                                 : isCopied
@@ -718,7 +719,7 @@ export default function AllMail() {
                                 </span>
                                 <div className="flex items-center gap-1 ml-auto">
                                   {done && !inactive && <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/40 px-1.5 py-0.5 rounded-full">DONE</span>}
-                                  <button onClick={() => removeCard(card.id)}
+                                  <button onClick={() => setConfirmDeleteId(card.id)}
                                     className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
                                       inactive ? "text-white/20 hover:bg-white/10 hover:text-white/60" : "text-slate-300 dark:text-slate-600 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-500"
                                     }`}>
@@ -754,6 +755,27 @@ export default function AllMail() {
                                 )}
                               </div>
                             </div>
+
+                            {/* Delete confirmation overlay */}
+                            {confirmDeleteId === card.id && (
+                              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-xl z-10 backdrop-blur-sm bg-white/90 dark:bg-slate-800/90 border border-red-200 dark:border-red-800">
+                                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Delete this card?</p>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); removeCard(card.id); setConfirmDeleteId(null); }}
+                                    className="px-4 py-1.5 rounded-lg text-xs font-bold bg-red-500 hover:bg-red-600 text-white transition-colors"
+                                  >
+                                    Yes
+                                  </button>
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
+                                    className="px-4 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 transition-colors"
+                                  >
+                                    No
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
