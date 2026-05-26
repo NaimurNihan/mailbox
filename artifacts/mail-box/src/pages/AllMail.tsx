@@ -459,11 +459,11 @@ export default function AllMail() {
         </div>
 
         {/* MAIN CONTENT */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto bg-gray-100 dark:bg-slate-950">
           <div className="max-w-4xl mx-auto px-4 py-5 space-y-4">
 
             {/* ── Note card ──────────────────────────────── */}
-            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden">
+            <div style={{ background: "#ffffff" }} className="dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-2xl shadow-sm overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 select-none">
                 <div className="flex items-center gap-2 cursor-pointer flex-1" onClick={() => setNoteOpen((v) => !v)}>
@@ -520,14 +520,15 @@ export default function AllMail() {
                 </div>
               </div>
 
-              {/* Textarea — borderless, clean white */}
+              {/* Textarea — full white, no borders, direct in card */}
               {noteOpen && (
                 <textarea
                   ref={textareaRef}
                   value={note}
                   onChange={(e) => handleNoteChange(e.target.value)}
-                  placeholder={"Paste emails here — one per line or comma separated.\nDuplicates are ignored automatically."}
-                  className="w-full h-52 text-sm font-mono text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 px-4 py-3 outline-none resize-none placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                  placeholder="Paste emails here — one per line or comma separated."
+                  style={{ background: "#ffffff" }}
+                  className="w-full h-64 text-sm font-mono text-slate-700 px-4 pb-4 pt-1 outline-none resize-none placeholder:text-slate-300 block"
                 />
               )}
             </div>
