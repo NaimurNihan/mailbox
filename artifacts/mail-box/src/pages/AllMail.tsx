@@ -329,35 +329,42 @@ export default function AllMail() {
         <div className="flex items-center gap-2">
           {total > 0 && (
             <button
-              onClick={() => setConfirmDeleteAll(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors shadow-sm"
-            >
-              <Trash2 size={12} /> Delete All
-            </button>
-          )}
-          {total > 0 && (
-            <button
               onClick={toggleAllGroups}
               title={allExpanded ? "Collapse all groups" : "Expand all groups"}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors shadow-sm border ${
+              className={`w-10 h-8 flex items-center justify-center rounded-xl transition-colors shadow-sm ${
                 allExpanded
-                  ? "bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700"
-                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                  ? "bg-indigo-500 hover:bg-indigo-600 text-white"
+                  : "bg-violet-500 hover:bg-violet-600 text-white"
               }`}
             >
-              {allExpanded ? <EyeOff size={12} /> : <Eye size={12} />}
-              {allExpanded ? "Hide All" : "Show All"}
+              {allExpanded ? <EyeOff size={15} /> : <Eye size={15} />}
             </button>
           )}
-          <button onClick={() => uploadRef.current?.click()}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
-            <Upload size={12} /> Upload
+          <button
+            onClick={() => uploadRef.current?.click()}
+            title="Upload"
+            className="w-10 h-8 flex items-center justify-center rounded-xl bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm"
+          >
+            <Upload size={15} />
           </button>
           <input ref={uploadRef} type="file" accept=".txt,.csv" className="hidden" onChange={handleUploadFile} />
-          <button onClick={handleDownload} disabled={total === 0}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-slate-700 dark:bg-slate-600 text-white rounded-lg hover:bg-slate-800 dark:hover:bg-slate-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-sm">
-            <Download size={12} /> Download
+          <button
+            onClick={handleDownload}
+            disabled={total === 0}
+            title="Download"
+            className="w-10 h-8 flex items-center justify-center rounded-xl bg-slate-700 hover:bg-slate-800 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-sm"
+          >
+            <Download size={15} />
           </button>
+          {total > 0 && (
+            <button
+              onClick={() => setConfirmDeleteAll(true)}
+              title="Delete All"
+              className="w-10 h-8 flex items-center justify-center rounded-xl bg-red-500 hover:bg-red-600 text-white transition-colors shadow-sm"
+            >
+              <Trash2 size={15} />
+            </button>
+          )}
         </div>
       </header>
 
