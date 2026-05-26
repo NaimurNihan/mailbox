@@ -1,17 +1,17 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
-import { outlookData as defaultData, OutlookEntry } from "@/data/outlookData";
+import { OutlookEntry } from "@/data/outlookData";
 import { Copy, Check, ChevronRight, Mail, Search, X, Upload, Download, Trash2, ExternalLink } from "lucide-react";
 
-const LS_ENTRIES = "outlook_entries_v1";
-const LS_DONE = "outlook_done_v1";
-const LS_SELECTED = "outlook_selected_id_v1";
+const LS_ENTRIES = "outlook_entries_v2";
+const LS_DONE = "outlook_done_v2";
+const LS_SELECTED = "outlook_selected_id_v2";
 
 function loadEntries(): OutlookEntry[] {
   try {
     const raw = localStorage.getItem(LS_ENTRIES);
     if (raw) return JSON.parse(raw) as OutlookEntry[];
   } catch {}
-  return defaultData;
+  return [];
 }
 
 function loadDoneIds(): Set<number> {
@@ -262,8 +262,8 @@ export default function Home() {
     localStorage.removeItem(LS_ENTRIES);
     localStorage.removeItem(LS_DONE);
     localStorage.removeItem(LS_SELECTED);
-    setEntries(defaultData);
-    setSelected(defaultData[0]);
+    setEntries([]);
+    setSelected(null);
     setDoneIds(new Set());
     setSearch("");
     setConfirmReset(false);
