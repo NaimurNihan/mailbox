@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Mail Box"
+version = "1.0.0"
+id = "artifacts/mail-box"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23498
+
+[services.development]
+run = "pnpm --filter @workspace/mail-box run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/mail-box", "run", "build" ]
+publicDir = "artifacts/mail-box/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23498"
+BASE_PATH = "/"
