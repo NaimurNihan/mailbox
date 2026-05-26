@@ -463,57 +463,68 @@ export default function AllMail() {
           <div className="max-w-4xl mx-auto px-4 py-5 space-y-4">
 
             {/* ── Note card ──────────────────────────────── */}
-            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 select-none">
+            <div className="bg-white dark:bg-slate-800 border-2 border-amber-400 dark:border-amber-600 rounded-2xl shadow-sm overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-2.5 select-none">
                 <div className="flex items-center gap-2 cursor-pointer flex-1" onClick={() => setNoteOpen((v) => !v)}>
                   <StickyNote size={15} className="text-amber-500" />
-                  <span className="text-sm font-bold text-amber-800 dark:text-amber-300">Note — Paste your mails here</span>
-                  {total > 0 && <span className="text-[11px] bg-amber-200 dark:bg-amber-800 text-amber-700 dark:text-amber-300 font-semibold px-2 py-0.5 rounded-full">{total} mails</span>}
+                  <span className="text-sm font-bold text-slate-800 dark:text-slate-100">Note — Paste your mails here</span>
+                  {total > 0 && (
+                    <span className="text-[11px] bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-semibold px-2 py-0.5 rounded-full border border-amber-300 dark:border-amber-700">
+                      {total} mails
+                    </span>
+                  )}
+                  {dupWarning > 0 && (
+                    <span className="text-[11px] text-orange-500 font-semibold animate-pulse">{dupWarning} duplicate{dupWarning > 1 ? "s" : ""} skipped</span>
+                  )}
                 </div>
-                <div className="flex items-center gap-1.5">
-                  {doneCount > 0 && <span className="text-[11px] bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full">✓ {doneCount} done</span>}
+                <div className="flex items-center gap-2">
+                  {/* Save button */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleSaveNote(); }}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-all shadow-sm ${
+                      hasUnsaved
+                        ? "bg-emerald-500 hover:bg-emerald-600 text-white"
+                        : "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-400 dark:text-emerald-600 cursor-default"
+                    }`}
+                  >
+                    <Check size={11} strokeWidth={3} />
+                    {hasUnsaved ? "Save" : "Save"}
+                  </button>
+
+                  {/* Clear Note button */}
                   {note && (
                     confirmClear ? (
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        <span className="text-[11px] text-red-500 font-medium">Clear note only?</span>
-                        <button onClick={clearNote} className="px-2 py-0.5 text-[11px] font-semibold bg-red-500 text-white rounded-lg">Yes</button>
-                        <button onClick={(e) => { e.stopPropagation(); setConfirmClear(false); }} className="px-2 py-0.5 text-[11px] font-semibold bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg">No</button>
+                        <span className="text-[11px] text-red-500 font-medium">Clear?</span>
+                        <button onClick={clearNote} className="px-2 py-1 text-[11px] font-semibold bg-red-500 text-white rounded-lg">Yes</button>
+                        <button onClick={(e) => { e.stopPropagation(); setConfirmClear(false); }} className="px-2 py-1 text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg">No</button>
                       </div>
                     ) : (
                       <button onClick={(e) => { e.stopPropagation(); setConfirmClear(true); }}
-                        className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold bg-amber-100 dark:bg-amber-900/40 border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400 rounded-lg hover:bg-amber-200 dark:hover:bg-amber-900/60 transition-colors">
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 hover:border-red-200 dark:hover:border-red-800 transition-colors">
                         <Trash2 size={11} /> Clear Note
                       </button>
                     )
                   )}
-                  <div className="cursor-pointer" onClick={() => setNoteOpen((v) => !v)}>
-                    {noteOpen ? <ChevronUp size={14} className="text-amber-400" /> : <ChevronDown size={14} className="text-amber-400" />}
-                  </div>
+
+                  {/* Collapse toggle */}
+                  <button className="cursor-pointer p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" onClick={() => setNoteOpen((v) => !v)}>
+                    {noteOpen ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
+                  </button>
                 </div>
               </div>
+
+              {/* Textarea */}
               {noteOpen && (
                 <div className="px-4 pb-4">
-                  <textarea ref={textareaRef} value={note} onChange={(e) => handleNoteChange(e.target.value)}
+                  <textarea
+                    ref={textareaRef}
+                    value={note}
+                    onChange={(e) => handleNoteChange(e.target.value)}
                     placeholder={"Paste emails here — one per line or comma separated.\nDuplicates are ignored automatically."}
-                    className="w-full h-36 text-sm font-mono text-slate-700 dark:text-slate-300 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-xl px-3 py-2.5 outline-none resize-none placeholder:text-amber-300 dark:placeholder:text-amber-700 focus:border-amber-400 focus:ring-1 focus:ring-amber-200 dark:focus:ring-amber-800 transition-all" />
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-2">
-                      <p className="text-[11px] text-amber-500 dark:text-amber-600">Each line = 1 card · Cards only update on Save · duplicates ignored</p>
-                      {dupWarning > 0 && <span className="text-[11px] text-orange-500 font-semibold animate-pulse">{dupWarning} duplicate{dupWarning > 1 ? "s" : ""} skipped</span>}
-                    </div>
-                    <button
-                      onClick={handleSaveNote}
-                      disabled={!hasUnsaved && cards.length > 0}
-                      className={`flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-lg transition-all shadow-sm ${
-                        hasUnsaved
-                          ? "bg-emerald-500 hover:bg-emerald-600 text-white animate-pulse"
-                          : "bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-default"
-                      }`}
-                    >
-                      <Check size={11} strokeWidth={3} />
-                      {hasUnsaved ? "Save" : "Saved"}
-                    </button>
-                  </div>
+                    className="w-full h-52 text-sm font-mono text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border-2 border-amber-300 dark:border-amber-700 rounded-xl px-3 py-2.5 outline-none resize-none placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:border-amber-400 dark:focus:border-amber-500 transition-all"
+                  />
                 </div>
               )}
             </div>
