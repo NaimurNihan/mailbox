@@ -145,13 +145,33 @@ function RawFormatCard({ selected }: { selected: OutlookEntry }) {
 }
 
 function FieldRow({ label, value, mono = true }: { label: string; value: string; mono?: boolean }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleClick = () => {
+    navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
-    <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 bg-white dark:bg-slate-800">
+    <div
+      onClick={handleClick}
+      className={`border rounded-lg p-3 cursor-pointer select-none transition-all duration-200 ${
+        copied
+          ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-400 dark:border-emerald-600 ring-2 ring-emerald-300/60"
+          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm"
+      }`}
+    >
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{label}</span>
-        <CopyButton text={value} label={label} />
+        <span className={`text-xs font-semibold uppercase tracking-wider transition-colors ${copied ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"}`}>
+          {label}
+        </span>
+        <span className={`flex items-center gap-1 text-xs font-medium transition-colors ${copied ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"}`}>
+          {copied ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
+          {copied ? "Copied!" : "Click to copy"}
+        </span>
       </div>
-      <p className={`text-sm text-slate-800 dark:text-slate-200 break-all leading-relaxed ${mono ? "font-mono" : ""}`}>
+      <p className={`text-sm break-all leading-relaxed transition-colors ${copied ? "text-emerald-700 dark:text-emerald-300" : "text-slate-800 dark:text-slate-200"} ${mono ? "font-mono" : ""}`}>
         {value}
       </p>
     </div>
