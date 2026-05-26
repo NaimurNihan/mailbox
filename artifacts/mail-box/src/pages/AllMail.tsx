@@ -463,7 +463,7 @@ export default function AllMail() {
           <div className="max-w-4xl mx-auto px-4 py-5 space-y-4">
 
             {/* ── Note card ──────────────────────────────── */}
-            <div style={{ background: "#ffffff" }} className="dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-2xl shadow-sm overflow-hidden">
+            <div style={{ background: "#f5f4ef" }} className="dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-2xl shadow-sm overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 select-none">
                 <div className="flex items-center gap-2 cursor-pointer flex-1" onClick={() => setNoteOpen((v) => !v)}>
@@ -527,8 +527,8 @@ export default function AllMail() {
                   value={note}
                   onChange={(e) => handleNoteChange(e.target.value)}
                   placeholder="Paste emails here — one per line or comma separated."
-                  style={{ background: "#ffffff" }}
-                  className="w-full h-64 text-sm font-mono text-slate-700 px-4 pb-4 pt-1 outline-none resize-none placeholder:text-slate-300 block"
+                  style={{ background: "#ffffff", width: "calc(100% - 1.5rem)" }}
+                  className="h-64 text-sm font-mono text-slate-700 px-4 pb-4 pt-1 outline-none resize-none placeholder:text-slate-300 block rounded-xl mx-3 mb-3 border border-slate-200"
                 />
               )}
             </div>
