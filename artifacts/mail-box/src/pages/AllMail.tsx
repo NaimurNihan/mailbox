@@ -465,7 +465,7 @@ export default function AllMail() {
             {/* ── Note card ──────────────────────────────── */}
             <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 select-none border-b border-slate-100 dark:border-slate-700">
+              <div className="flex items-center justify-between px-4 py-3 select-none">
                 <div className="flex items-center gap-2 cursor-pointer flex-1" onClick={() => setNoteOpen((v) => !v)}>
                   <StickyNote size={15} className="text-amber-500" />
                   <span className="text-sm font-bold text-slate-800 dark:text-slate-100">Note — Paste your mails here</span>
