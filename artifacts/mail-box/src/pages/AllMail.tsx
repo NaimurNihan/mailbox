@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Copy, Check, StickyNote, Trash2, ChevronDown, ChevronUp, X, Download, Upload, Zap, Clock, Calendar, Eye, EyeOff } from "lucide-react";
+import { Copy, Check, StickyNote, Trash2, ChevronDown, ChevronUp, X, Download, Upload, Zap, Clock, Calendar, Eye, EyeOff, Search } from "lucide-react";
 
 const LS_NOTE       = "allmail_note_v1";
 const LS_CARDS      = "allmail_cards_v2";
@@ -217,6 +217,7 @@ export default function AllMail() {
   const [dupWarning,      setDupWarning]      = useState(0);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<number>>(new Set());
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const uploadRef   = useRef<HTMLInputElement>(null);
@@ -311,7 +312,20 @@ export default function AllMail() {
 
   const total     = cards.length;
   const doneCount = [...doneIds].filter((id) => cards.some((c) => c.id === id)).length;
-  const groups    = chunkArray(cards, GROUP_SIZE);
+
+  const cardOriginalIndex = useMemo(() => {
+    const m = new Map<string, number>();
+    cards.forEach((c, i) => m.set(c.id, i));
+    return m;
+  }, [cards]);
+
+  const displayCards = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return cards;
+    return cards.filter((c) => c.text.toLowerCase().includes(q));
+  }, [cards, searchQuery]);
+
+  const groups    = chunkArray(displayCards, GROUP_SIZE);
 
   // all groups open = none in the collapsed set
   const allExpanded = groups.length > 0 && collapsedGroups.size === 0;
@@ -352,6 +366,27 @@ export default function AllMail() {
           {total > 0 && <span className="text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-semibold px-2 py-0.5 rounded-full">{total} cards</span>}
           {doneCount > 0 && <span className="text-[11px] bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full">✓ {doneCount} done</span>}
         </div>
+
+        {/* Search box */}
+        <div className="flex-1 max-w-xs mx-4 relative">
+          <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-7 pr-7 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-600 transition-all"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+            >
+              <X size={11} strokeWidth={2.5} />
+            </button>
+          )}
+        </div>
+
         <div className="flex items-center gap-2">
           {total > 0 && (
             <button
@@ -661,7 +696,7 @@ export default function AllMail() {
                   {!collapsed && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700">
                       {group.map((card, localIdx) => {
-                        const globalIdx = gi * GROUP_SIZE + localIdx;
+                        const globalIdx = cardOriginalIndex.get(card.id) ?? gi * GROUP_SIZE + localIdx;
                         const done      = doneIds.has(card.id);
                         const isoVal    = dueDates[card.id] ?? "";
                         const inactive  = isoVal.length > 0;
