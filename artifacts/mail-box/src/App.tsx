@@ -34,38 +34,43 @@ function TabBar({ dark, onToggle }: { dark: boolean; onToggle: () => void }) {
   const [isAllMail] = useRoute("/all-mail");
 
   return (
-    <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex items-center px-4 gap-1 h-12 shrink-0 select-none">
-      <div className="flex items-center gap-2 mr-4">
+    <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex items-center px-4 h-12 shrink-0 select-none relative">
+      {/* Left: Logo */}
+      <div className="flex items-center gap-2">
         <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
           <Mail size={14} className="text-white" />
         </div>
         <span className="text-sm font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">Outlook</span>
       </div>
 
-      <Link
-        href="/"
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-          isHome
-            ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
-            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-        }`}
-      >
-        <Mail size={13} />
-        Outlook
-      </Link>
+      {/* Center: Tab buttons */}
+      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+        <Link
+          href="/"
+          className={`w-40 h-8 flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            isHome
+              ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }`}
+        >
+          <Mail size={13} />
+          Outlook
+        </Link>
 
-      <Link
-        href="/all-mail"
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-          isAllMail
-            ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
-            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-        }`}
-      >
-        <LayoutGrid size={13} />
-        All Mail
-      </Link>
+        <Link
+          href="/all-mail"
+          className={`w-40 h-8 flex items-center justify-center gap-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            isAllMail
+              ? "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+          }`}
+        >
+          <LayoutGrid size={13} />
+          All Mail
+        </Link>
+      </div>
 
+      {/* Right: Night toggle */}
       <button
         onClick={onToggle}
         title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
