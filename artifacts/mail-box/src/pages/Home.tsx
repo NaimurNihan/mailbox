@@ -103,6 +103,47 @@ function EntryRow({
   );
 }
 
+function RawFormatCard({ selected }: { selected: OutlookEntry }) {
+  const [copied, setCopied] = useState(false);
+  const rawText = `${selected.email}|${selected.password}|${selected.cookie}|${selected.uuid}`;
+
+  const handleClick = () => {
+    navigator.clipboard.writeText(rawText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  return (
+    <div
+      onClick={handleClick}
+      className={`rounded-xl p-4 mb-4 border cursor-pointer select-none transition-all duration-200 ${
+        copied
+          ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-400 dark:border-emerald-600 ring-2 ring-emerald-300/60"
+          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm"
+      }`}
+      title="Click to copy full raw line"
+    >
+      <div className="flex items-center justify-between mb-2">
+        <span className={`text-xs font-medium transition-colors ${copied ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
+          {copied ? "✓ Copied!" : "Raw Format — click to copy"}
+        </span>
+        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full transition-colors ${copied ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400" : "bg-slate-100 dark:bg-slate-700 text-slate-400"}`}>
+          {copied ? "✓" : "Click"}
+        </span>
+      </div>
+      <p className="text-xs font-mono break-all leading-relaxed">
+        <span className={`transition-colors ${copied ? "text-emerald-700 dark:text-emerald-300" : "text-blue-600 dark:text-blue-400"}`}>{selected.email}</span>
+        <span className="text-slate-400">|</span>
+        <span className={`transition-colors ${copied ? "text-emerald-700 dark:text-emerald-300" : "text-amber-600 dark:text-amber-400"}`}>{selected.password}</span>
+        <span className="text-slate-400">|</span>
+        <span className={`opacity-70 transition-colors ${copied ? "text-emerald-600 dark:text-emerald-400" : "text-purple-600 dark:text-purple-400"}`}>{selected.cookie.slice(0, 40)}...</span>
+        <span className="text-slate-400">|</span>
+        <span className={`transition-colors ${copied ? "text-emerald-700 dark:text-emerald-300" : "text-pink-600 dark:text-pink-400"}`}>{selected.uuid}</span>
+      </p>
+    </div>
+  );
+}
+
 function FieldRow({ label, value, mono = true }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 bg-white dark:bg-slate-800">
@@ -414,21 +455,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="bg-slate-900 dark:bg-slate-950 rounded-xl p-4 mb-4 border border-slate-700 dark:border-slate-800">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400 font-medium">Raw Format</span>
-                  <CopyButton text={`${selected.email}|${selected.password}|${selected.cookie}|${selected.uuid}`} label="raw line" />
-                </div>
-                <p className="text-xs font-mono break-all leading-relaxed">
-                  <span className="text-blue-300">{selected.email}</span>
-                  <span className="text-slate-500">|</span>
-                  <span className="text-yellow-300">{selected.password}</span>
-                  <span className="text-slate-500">|</span>
-                  <span className="text-purple-300 opacity-70">{selected.cookie.slice(0, 40)}...</span>
-                  <span className="text-slate-500">|</span>
-                  <span className="text-pink-300">{selected.uuid}</span>
-                </p>
-              </div>
+              <RawFormatCard selected={selected} />
 
               <div className="space-y-3">
                 <FieldRow label="Email" value={selected.email} />
