@@ -463,7 +463,7 @@ export default function AllMail() {
           <div className="max-w-4xl mx-auto px-4 py-5 space-y-4">
 
             {/* ── Note card ──────────────────────────────── */}
-            <div style={{ background: "#f5f4ef" }} className="dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-2xl shadow-sm overflow-hidden">
+            <div style={{ background: "#f0f5ff" }} className="dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-2xl shadow-sm overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 select-none">
                 <div className="flex items-center gap-2 cursor-pointer flex-1" onClick={() => setNoteOpen((v) => !v)}>
