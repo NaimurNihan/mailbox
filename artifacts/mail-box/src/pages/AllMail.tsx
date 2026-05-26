@@ -213,6 +213,7 @@ export default function AllMail() {
 
   const [noteOpen,        setNoteOpen]        = useState(true);
   const [confirmClear,    setConfirmClear]    = useState(false);
+  const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
   const [dupWarning,      setDupWarning]      = useState(0);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<number>>(new Set());
 
@@ -242,7 +243,17 @@ export default function AllMail() {
   // unsaved = note text differs from what was last committed
   const hasUnsaved = note.trim() !== savedNote.trim();
 
-  const clearNote    = () => { setNote(""); setSavedNote(""); setConfirmClear(false); };
+  const clearNote      = () => { setNote(""); setSavedNote(""); setConfirmClear(false); };
+  const deleteAllCards = () => {
+    setCards([]);
+    setDoneIds(new Set());
+    setCopiedIds(new Set());
+    setDueDates({});
+    setNote("");
+    setSavedNote("");
+    setCollapsedGroups(new Set());
+    setConfirmDeleteAll(false);
+  };
   const markCopied   = (id: string) => setCopiedIds((prev) => new Set([...prev, id]));
   const unmarkCopied = (id: string) => setCopiedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
   const removeCard   = (id: string) => setCards((prev) => prev.filter((c) => c.id !== id));
@@ -316,6 +327,14 @@ export default function AllMail() {
           {doneCount > 0 && <span className="text-[11px] bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full">✓ {doneCount} done</span>}
         </div>
         <div className="flex items-center gap-2">
+          {total > 0 && (
+            <button
+              onClick={() => setConfirmDeleteAll(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors shadow-sm"
+            >
+              <Trash2 size={12} /> Delete All
+            </button>
+          )}
           {total > 0 && (
             <button
               onClick={toggleAllGroups}
@@ -717,6 +736,39 @@ export default function AllMail() {
           </div>
         </div>
       </div>
+
+      {/* ── Delete All confirmation modal ─────────────── */}
+      {confirmDeleteAll && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setConfirmDeleteAll(false)} />
+          <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-600 w-80 p-6 flex flex-col items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center">
+              <Trash2 size={22} className="text-red-500" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-100">Delete all groups?</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                This will permanently remove all <span className="font-semibold text-red-500">{total} cards</span> across{" "}
+                <span className="font-semibold">{groups.length} groups</span>. This cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={() => setConfirmDeleteAll(false)}
+                className="flex-1 px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={deleteAllCards}
+                className="flex-1 px-4 py-2 text-xs font-bold rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors shadow-sm"
+              >
+                Yes, Delete All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
