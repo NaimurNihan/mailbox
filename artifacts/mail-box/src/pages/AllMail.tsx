@@ -317,6 +317,7 @@ export default function AllMail() {
   const toggleAllGroups = () => {
     if (allExpanded) {
       setCollapsedGroups(new Set(groups.map((_, i) => i)));
+      setNoteOpen(false);
     } else {
       setCollapsedGroups(new Set());
     }
@@ -454,9 +455,14 @@ export default function AllMail() {
                     return (
                       <div key={card.id} className={`rounded-lg border px-2.5 py-2 ${bgClass}`}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${numClass}`}>
-                            #{String(globalIdx + 1).padStart(3, "0")}
-                          </span>
+                          <div className="flex items-center gap-1">
+                            <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${numClass}`}>
+                              #{String(globalIdx + 1).padStart(3, "0")}
+                            </span>
+                            <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded">
+                              G{Math.floor(globalIdx / GROUP_SIZE) + 1}
+                            </span>
+                          </div>
                           {isOverdue ? (
                             <span className="text-[9px] font-extrabold text-white bg-red-500 dark:bg-red-600 px-1.5 py-0.5 rounded animate-pulse">
                               OVER DATE
