@@ -433,8 +433,6 @@ export default function Home() {
               <div className="space-y-3">
                 <FieldRow label="Email" value={selected.email} />
                 <FieldRow label="Password" value={selected.password} />
-                <FieldRow label="Cookie" value={selected.cookie} />
-                <FieldRow label="UUID" value={selected.uuid} />
               </div>
             </div>
           )}
