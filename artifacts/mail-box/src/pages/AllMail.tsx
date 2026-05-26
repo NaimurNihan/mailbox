@@ -267,10 +267,19 @@ export default function AllMail() {
     setCollapsedGroups((prev) => { const n = new Set(prev); n.has(gi) ? n.delete(gi) : n.add(gi); return n; });
 
   const handleDownload = () => {
-    const blob = new Blob([cards.map((c) => c.text).join("\n")], { type: "text/plain" });
+    const payload = {
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      note,
+      cards,
+      doneIds:   [...doneIds],
+      copiedIds: [...copiedIds],
+      dueDates,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement("a");
-    a.href = url; a.download = "allmail_export.txt"; a.click();
+    a.href = url; a.download = "allmail_export.json"; a.click();
     URL.revokeObjectURL(url);
   };
 
@@ -278,8 +287,23 @@ export default function AllMail() {
     const file = e.target.files?.[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = (ev) => {
-      setCards(parseAndMerge((ev.target?.result as string) ?? "", cards));
+      const raw = (ev.target?.result as string) ?? "";
       if (uploadRef.current) uploadRef.current.value = "";
+      // Try JSON full-backup first
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed.version === 2 && Array.isArray(parsed.cards)) {
+          setCards(parsed.cards);
+          setNote(parsed.note ?? "");
+          setSavedNote(parsed.note ?? "");
+          setDoneIds(new Set(parsed.doneIds ?? []));
+          setCopiedIds(new Set(parsed.copiedIds ?? []));
+          setDueDates(parsed.dueDates ?? {});
+          return;
+        }
+      } catch { /* not JSON — fall through to plain text */ }
+      // Plain text / .txt / .csv — merge emails only
+      setCards(parseAndMerge(raw, cards));
     };
     reader.readAsText(file);
   };
@@ -347,7 +371,7 @@ export default function AllMail() {
           >
             <Upload size={15} />
           </button>
-          <input ref={uploadRef} type="file" accept=".txt,.csv" className="hidden" onChange={handleUploadFile} />
+          <input ref={uploadRef} type="file" accept=".txt,.csv,.json" className="hidden" onChange={handleUploadFile} />
           <button
             onClick={handleDownload}
             disabled={total === 0}
