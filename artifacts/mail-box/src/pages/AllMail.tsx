@@ -236,7 +236,7 @@ export default function AllMail() {
     const existing = new Set(cards.map((c) => c.text.toLowerCase().trim()));
     const dupes    = parsed.filter((c) => existing.has(c.text.toLowerCase().trim())).length;
     if (dupes > 0) { setDupWarning(dupes); setTimeout(() => setDupWarning(0), 2500); }
-    setCards(parsed);
+    setCards(parseAndMerge(note, cards));
     setSavedNote(note);
   };
 
