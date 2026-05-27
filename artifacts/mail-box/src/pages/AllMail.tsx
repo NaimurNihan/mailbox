@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Copy, Check, StickyNote, Trash2, ChevronDown, ChevronUp, X, Download, Upload, Zap, Clock, Calendar, Eye, EyeOff, Search } from "lucide-react";
+import { Copy, Check, StickyNote, Trash2, ChevronDown, ChevronUp, X, Download, Upload, Zap, Clock, Calendar, Eye, EyeOff, Search, ArrowUpDown } from "lucide-react";
 
 const LS_NOTE       = "allmail_note_v1";
 const LS_CARDS      = "allmail_cards_v2";
@@ -218,6 +218,7 @@ export default function AllMail() {
   const [collapsedGroups, setCollapsedGroups] = useState<Set<number>>(new Set());
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [reverseGroups, setReverseGroups] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const uploadRef   = useRef<HTMLInputElement>(null);
@@ -327,6 +328,11 @@ export default function AllMail() {
 
   const groups    = chunkArray(displayCards, GROUP_SIZE);
 
+  const orderedGroups = useMemo(() => {
+    const indexed = groups.map((group, gi) => ({ group, originalGi: gi }));
+    return reverseGroups ? [...indexed].reverse() : indexed;
+  }, [groups, reverseGroups]);
+
   // all groups open = none in the collapsed set
   const allExpanded = groups.length > 0 && collapsedGroups.size === 0;
   const toggleAllGroups = () => {
@@ -388,6 +394,19 @@ export default function AllMail() {
         </div>
 
         <div className="flex items-center gap-2">
+          {total > 0 && (
+            <button
+              onClick={() => setReverseGroups((v) => !v)}
+              title={reverseGroups ? "Show groups: oldest first" : "Show groups: newest first"}
+              className={`w-10 h-8 flex items-center justify-center rounded-xl transition-colors shadow-sm ${
+                reverseGroups
+                  ? "bg-amber-500 hover:bg-amber-600 text-white"
+                  : "bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300"
+              }`}
+            >
+              <ArrowUpDown size={15} />
+            </button>
+          )}
           {total > 0 && (
             <button
               onClick={toggleAllGroups}
@@ -666,7 +685,7 @@ export default function AllMail() {
             })()}
 
             {/* ── Groups ─────────────────────────────────── */}
-            {groups.map((group, gi) => {
+            {orderedGroups.map(({ group, originalGi: gi }) => {
               const startNum  = gi * GROUP_SIZE + 1;
               const endNum    = startNum + group.length - 1;
               const collapsed = collapsedGroups.has(gi);
