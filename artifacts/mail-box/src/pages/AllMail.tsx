@@ -6,7 +6,9 @@ const LS_CARDS      = "allmail_cards_v2";
 const LS_DONE       = "allmail_done_v1";
 const LS_COPIED     = "allmail_copied_v1"; // permanently green after copy
 const LS_DUEDATES   = "allmail_duedates_v2"; // values = "YYYY-MM-DD" ISO strings
-const LS_SAVED_NOTE = "allmail_saved_note_v1"; // the note text that was last saved to cards
+const LS_SAVED_NOTE      = "allmail_saved_note_v1"; // the note text that was last saved to cards
+const LS_REVERSE_GROUPS  = "allmail_reverse_groups_v1";
+const LS_COLLAPSED_GRPS  = "allmail_collapsed_groups_v1";
 
 const GROUP_SIZE = 6;
 
@@ -215,10 +217,14 @@ export default function AllMail() {
   const [confirmClear,    setConfirmClear]    = useState(false);
   const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
   const [dupWarning,      setDupWarning]      = useState(0);
-  const [collapsedGroups, setCollapsedGroups] = useState<Set<number>>(new Set());
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<number>>(() => {
+    try { return new Set(JSON.parse(localStorage.getItem(LS_COLLAPSED_GRPS) ?? "[]") as number[]); } catch { return new Set(); }
+  });
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [reverseGroups, setReverseGroups] = useState(false);
+  const [reverseGroups, setReverseGroups] = useState<boolean>(() =>
+    localStorage.getItem(LS_REVERSE_GROUPS) === "true"
+  );
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const uploadRef   = useRef<HTMLInputElement>(null);
@@ -228,7 +234,9 @@ export default function AllMail() {
   useEffect(() => { localStorage.setItem(LS_CARDS,      JSON.stringify(cards)); },            [cards]);
   useEffect(() => { localStorage.setItem(LS_DONE,       JSON.stringify([...doneIds])); },     [doneIds]);
   useEffect(() => { localStorage.setItem(LS_COPIED,     JSON.stringify([...copiedIds])); },   [copiedIds]);
-  useEffect(() => { localStorage.setItem(LS_DUEDATES,   JSON.stringify(dueDates)); },         [dueDates]);
+  useEffect(() => { localStorage.setItem(LS_DUEDATES,        JSON.stringify(dueDates)); },                [dueDates]);
+  useEffect(() => { localStorage.setItem(LS_REVERSE_GROUPS,  String(reverseGroups)); },                   [reverseGroups]);
+  useEffect(() => { localStorage.setItem(LS_COLLAPSED_GRPS,  JSON.stringify([...collapsedGroups])); },    [collapsedGroups]);
 
   // note typing only saves text — does NOT update cards
   const handleNoteChange = (val: string) => { setNote(val); };
